@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:todo_app_bloc/blocs/todo_filter/todo_filter_bloc.dart';
+import 'package:todo_app_bloc/blocs/todo_list/todo_list_bloc.dart';
+import 'package:todo_app_bloc/blocs/todo_search/todo_search_bloc.dart';
 import 'package:todo_app_bloc/cubits/todo_filter/todo_filter_cubit.dart';
 import 'package:todo_app_bloc/cubits/todo_list/todo_list_cubit.dart';
 import 'package:todo_app_bloc/cubits/todo_search/todo_search_cubit.dart';
@@ -11,7 +14,6 @@ class SearchAndFilter extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final debounce = Debounce(miliseconds: 1000);
     return Column(
       children: [
         TextField(
@@ -21,9 +23,9 @@ class SearchAndFilter extends StatelessWidget {
               prefixIcon: Icon(Icons.search)),
           onChanged: (String? search) {
             if (search != null) {
-              debounce.run(() {
-                BlocProvider.of<TodoSearchCubit>(context).setSearchTerm(search);
-              });
+              BlocProvider.of<TodoSearchBloc>(
+                context,
+              ).add(ChangeTodoSearchEvent(searchTerm: search));
             }
           },
         ),
@@ -53,7 +55,7 @@ class SearchAndFilter extends StatelessWidget {
 }
 
 Widget filterButton(BuildContext context, Filter filter) {
-  final todos = context.watch<TodoListCubit>().state.todos;
+  final todos = context.watch<TodoListBloc>().state.todos;
   return Container(
     alignment: Alignment.center,
     decoration: BoxDecoration(
@@ -63,7 +65,9 @@ Widget filterButton(BuildContext context, Filter filter) {
             splashFactory: NoSplash.splashFactory,
             foregroundColor: Colors.white),
         onPressed: () {
-          context.read<TodoFilterCubit>().changeFilter(filter);
+          context
+              .read<TodoFilterBloc>()
+              .add(ChangeTodoFilterEvent(newFilter: filter));
         },
         child: Text(
           "${filter == Filter.all ? 'All (${todos.length})' : filter == Filter.active ? 'Active (${todos.where((value) => !value.completed).length.toString()})' : 'Completed (${todos.where((value) => value.completed).length.toString()})'}",
@@ -76,6 +80,6 @@ Widget filterButton(BuildContext context, Filter filter) {
 }
 
 Color textColor(BuildContext context, Filter filter) {
-  final currentFilter = context.watch<TodoFilterCubit>().state.filter;
+  final currentFilter = context.watch<TodoFilterBloc>().state.filter;
   return currentFilter == filter ? Colors.blue : Colors.grey;
 }

@@ -1,4 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:todo_app_bloc/blocs/active_todo_count/active_todo_count_bloc.dart';
+import 'package:todo_app_bloc/blocs/bloc/filtered_todo_bloc.dart';
+import 'package:todo_app_bloc/blocs/todo_filter/todo_filter_bloc.dart';
+import 'package:todo_app_bloc/blocs/todo_list/todo_list_bloc.dart';
+import 'package:todo_app_bloc/blocs/todo_search/todo_search_bloc.dart';
 import 'package:todo_app_bloc/cubits/active_todo_count/active_todo_count_dart_cubit.dart';
 import 'package:todo_app_bloc/cubits/filter_todo/filter_todo_cubit.dart';
 import 'package:todo_app_bloc/cubits/todo_filter/todo_filter_cubit.dart';
@@ -17,26 +22,30 @@ class MyApp extends StatelessWidget {
     return MultiBlocProvider(
       providers: [
         BlocProvider(
-          create: (context) => TodoFilterCubit(),
+          create: (context) => TodoFilterBloc(),
         ),
         BlocProvider(
-          create: (context) => TodoSearchCubit(),
+          create: (context) => TodoSearchBloc(),
         ),
         BlocProvider(
-          create: (context) => TodoListCubit(),
+          create: (context) => TodoListBloc(),
         ),
         BlocProvider(
-          create: (context) => ActiveTodoCountCubit(
+          create: (context) => ActiveTodoCountBloc(
+              todoListBloc: BlocProvider.of<TodoListBloc>(context),
               initialActiveTodoCount:
-                  context.read<TodoListCubit>().state.todos.length),
+                  context.read<TodoListBloc>().state.todos.length),
         ),
         BlocProvider(
-            create: (context) => FilterTodoCubit(
-                  initialTodoCubit:
-                      BlocProvider.of<TodoListCubit>(context).state.todos,
+            create: (context) => FilteredTodoBloc(
+                  todoListBloc: BlocProvider.of<TodoListBloc>(context),
+                  todoFilterBloc: BlocProvider.of<TodoFilterBloc>(context),
+                  todoSearchBloc: BlocProvider.of<TodoSearchBloc>(context),
+                  initialTodo:
+                      BlocProvider.of<TodoListBloc>(context).state.todos,
                 ))
       ],
-      child: MaterialApp(
+      child: const MaterialApp(
         home: TodosPage(),
       ),
     );

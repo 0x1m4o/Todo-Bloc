@@ -10,6 +10,7 @@ abstract class FilteredTodoEvent extends Equatable {
 
 class ChangeFilterTodoEvent extends FilteredTodoEvent {
   List<Todo> filteredtodo;
+
   ChangeFilterTodoEvent({
     required this.filteredtodo,
   });

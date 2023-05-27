@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:todo_app_bloc/blocs/todo_list/todo_list_bloc.dart';
 import 'package:todo_app_bloc/cubits/todo_list/todo_list_cubit.dart';
 
 class CreateTodo extends StatelessWidget {
@@ -12,7 +13,8 @@ class CreateTodo extends StatelessWidget {
       controller: createController,
       onSubmitted: (String value) {
         if (value.isNotEmpty) {
-          BlocProvider.of<TodoListCubit>(context).addData(value);
+          BlocProvider.of<TodoListBloc>(context)
+              .add(AddTodoListEvent(todoDesc: value));
         }
       },
       decoration: InputDecoration(

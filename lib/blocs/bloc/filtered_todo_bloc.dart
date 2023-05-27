@@ -32,12 +32,13 @@ class FilteredTodoBloc extends Bloc<FilteredTodoEvent, FilteredTodoState> {
         todoListBloc.stream.listen((TodoListState todoListState) {
       setFilteredTodo();
     });
-    todoSearchStreamSubscription =
-        todoSearchBloc.stream.listen((TodoSearchState todoSearchState) {
-      setFilteredTodo();
-    });
+
     todoFilterStreamSubscription =
         todoFilterBloc.stream.listen((TodoFilterState todoFilterState) {
+      setFilteredTodo();
+    });
+    todoSearchStreamSubscription =
+        todoSearchBloc.stream.listen((TodoSearchState todoSearchState) {
       setFilteredTodo();
     });
 
@@ -82,7 +83,9 @@ class FilteredTodoBloc extends Bloc<FilteredTodoEvent, FilteredTodoState> {
           .toList();
     }
 
-    add(ChangeFilterTodoEvent(filteredtodo: filteredTodo));
+    add(ChangeFilterTodoEvent(
+      filteredtodo: filteredTodo,
+    ));
   }
 
   @override
