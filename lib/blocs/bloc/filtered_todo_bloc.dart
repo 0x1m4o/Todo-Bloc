@@ -63,7 +63,8 @@ class FilteredTodoBloc extends Bloc<FilteredTodoEvent, FilteredTodoState> {
       case Filter.completed:
         // We filter out the todo that completed
         filteredTodo = todoListBloc.state.todos
-          ..where((Todo todos) => todos.completed).toList();
+            .where((Todo todos) => todos.completed)
+            .toList();
         break;
 
       // If the Filter tab is 'all'.
